@@ -1,0 +1,249 @@
+ .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+  }
+
+ #home {
+     height:900px;
+     width:100%;
+     background-color:#f4511e;
+     color:#ffffff;
+ }
+
+ #login {
+     display: none;
+ }
+
+ .db-dp, .db-btn, .db-show {
+     margin-top: 20px;
+ }
+
+ .imgul, .imgtop {
+     position: relative;
+     padding: 0;
+     margin: 15px;
+     list-style: none;
+     text-align: center;
+     text-transform: uppercase;
+     font-weight: 900;
+     font-size: 20px;
+     line-height: 40px;
+     color: #555;
+ }
+
+ .images {
+     position: absolute;
+     margin: auto;
+     top: 0;
+     left: 0;
+     bottom: 0;
+     right: 0;
+     width: 300px;
+     height: 200px;
+     border-radius: 1px;
+     box-shadow: 0 0 0 4px #fff;
+     cursor: pointer;
+ }
+
+ .pic,.vpic,.ppic{
+     position: relative;
+     margin: 8px;
+     width: 355px;
+     height: 230px;
+     float: left;
+ }
+
+ .pic:before,.vpic:before,.ppic:before {
+     content: "\2714";
+     display: block;
+     position: absolute;
+     margin: auto;
+     top: 0;
+     left: 0;
+     bottom: 0;
+     right: 0;
+     width: 40px;
+     height: 40px;
+     line-height: 40px;
+     background: #5189f2;
+     border-radius: 50px;
+     color: #fff;
+     text-align: center;
+     font-size: 16px;
+     z-index: 10;
+     opacity: 0;
+     cursor: pointer;
+ }
+
+ .pic.selected:before ,.vpic.selected:before,.ppic.selected:before{
+     opacity: 1;
+ }
+
+ /* img selection */
+ .pic.selected img,.vpic.selected img,.ppic.selected img {
+     box-shadow: 0 0 0 4px #5189f2;
+ }
+
+ /* button */
+ .select, .send, .audittitle, .deletePic, .vselect, .vsend, .vaudittitle, .vdeletePic
+ , .pselect, .psend, .paudittitle, .pdeletePic{
+     height: 45px;
+     margin: 10px;
+     padding: 5px 0;
+     font-weight: 700;
+     font-size: 15px;
+     letter-spacing: 2px;
+     color: #fff;
+     border: 0;
+     border-radius: 2px;
+     text-transform: uppercase;
+     outline: 0;
+ }
+
+ .backupdb, .restoreddb, .uploadImagebt, .uploadVideobt, .uploadVRbt, .uploadApplicationBtn, .uploadWebViewbt{
+     color: #fff;
+ }
+
+ .select:hover, .audittitle:hover, .deletePic:hover , .vselect:hover , .vaudittitle:hover , .vdeletePic:hover
+ , .pselect:hover , .paudittitle:hover , .pdeletePic:hover{
+     -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.29), inset 0px 0px 2px rgba(0,0,0, .5);
+     -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.29), inset 0px 0px 2px rgba(0,0,0, .5);
+     box-shadow: 1px 1px 1px rgba(0,0,0,.29), inset 0px 0px 2px rgba(0,0,0, .5);
+ }
+ .select:active, .audittitle:active, .deletePic:active, .vselect:active, .vaudittitle:active, .vdeletePic:active
+ , .pselect:active, .paudittitle:active, .pdeletePic:active{
+     -webkit-box-shadow: inset 0px 0px 3px rgba(0,0,0, .8);
+     -moz-box-shadow: inset 0px 0px 3px rgba(0,0,0, .8);
+     box-shadow: inset 0px 0px 3px rgba(0,0,0, .8);
+ }
+
+ .audittitle, .deletePic,
+ .vaudittitle, .vdeletePic,
+ .paudittitle, .pdeletePic,
+ .backupdb, .restoreddb,
+ .uploadImagebt,.uploadVideobt,
+ .uploadVRbt,.uploadApplicationBtn,
+ .uploadWebViewbt,
+ .newUserBt,.activeUserBt,
+ .heatContentBt{
+     content: 'submit';
+     background: #5189f2;
+     display: inline-block;
+     position: relative;
+     color: #fff;
+     margin: 10px;
+     padding: 0 20px;
+     text-align: center;
+     text-decoration: none;
+     font: bold 12px/25px Arial, sans-serif;
+
+     text-shadow: 1px 1px 1px rgba(255,255,255, .22);
+
+     -webkit-border-radius: 30px;
+     -moz-border-radius: 30px;
+     border-radius: 30px;
+
+     -webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+     -moz-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+     box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+
+     -webkit-transition: all 0.15s ease;
+     -moz-transition: all 0.15s ease;
+     -o-transition: all 0.15s ease;
+     -ms-transition: all 0.15s ease;
+     transition: all 0.15s ease;
+ }
+
+ .panel-title{
+     color: #5189f2;
+ }
+
+ .select, .vselect, .pselect{
+     float: left;
+     background: #5189f2;
+     cursor: pointer;
+     width: 150px;
+     display: inline-block;
+     position: relative;
+     margin: 10px;
+     padding: 0 20px;
+     text-align: center;
+     text-decoration: none;
+     font: bold 12px/25px Arial, sans-serif;
+
+     text-shadow: 1px 1px 1px rgba(255,255,255, .22);
+
+     -webkit-border-radius: 30px;
+     -moz-border-radius: 30px;
+     border-radius: 30px;
+
+     -webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+     -moz-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+     box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+
+     -webkit-transition: all 0.15s ease;
+     -moz-transition: all 0.15s ease;
+     -o-transition: all 0.15s ease;
+     -ms-transition: all 0.15s ease;
+     transition: all 0.15s ease;
+ }
+
+ .select:before, .vselect:before, .pselect:before{
+     position: absolute;
+     display: block;
+     content: 'select all';
+     width: 150px;
+     text-align: justify;
+     margin-top: -15px;
+ }
+
+ .select:after, .vselect:after, .pselect:after{
+     position: absolute;
+     content: 'unselect';
+     display: block;
+     width: 150px;
+     margin-top: -15px;
+     text-align: justify;
+     opacity: 0;
+ }
+
+ .select.selected:before ,.vselect.selected:before,.pselect.selected:before{
+     opacity: 0;
+ }
+
+ .select.selected:after ,.vselect.selected:after ,.pselect.selected:after{
+     opacity: 1;
+ }
+
+ .send ,.vsend ,.psend {
+     float: right;
+     background: #aaa;
+     padding: 0px 15px;
+ }
+
+ .send.selected,.vsend.selected,.psend.selected {
+     background: #5189f2;
+     cursor: pointer;
+ }
+
+ .send:after,.vsend:after,.psend:after{
+     position: absolute;
+     content: attr(data-counter);
+     padding: 5px 8px;
+     margin: -29px 0 0 0px;
+     line-height: 100%;
+     border: 2px #fff solid;
+     border-radius: 60px;
+     background: #5189f2;
+     opacity: 0;
+ }
+
+ .send.selected:after ,.vsend.selected:after,.psend.selected:after{
+     opacity: 1;
+ }
+
+ .afooter, .vafooter, .pafooter {
+     position: fixed;
+     top: 96%;
+     left: 40%;
+ }

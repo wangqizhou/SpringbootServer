@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <package name="com.evistek.mediaserver.entity"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="mybatis/UserMapper.xml"/>
+        <mapper resource="mybatis/AdminMapper.xml"/>
+        <mapper resource="mybatis/AuthorityMapper.xml"/>
+        <mapper resource="mybatis/CategoryMapper.xml"/>
+        <mapper resource="mybatis/VideoMapper.xml"/>
+        <mapper resource="mybatis/ProductMapper.xml"/>
+        <mapper resource="mybatis/DeviceMapper.xml"/>
+        <mapper resource="mybatis/FavoriteMapper.xml"/>
+        <mapper resource="mybatis/ImageMapper.xml"/>
+        <mapper resource="mybatis/PlayRecordMapper.xml"/>
+        <mapper resource="mybatis/TotalPlayRecordMapper.xml"/>
+        <mapper resource="mybatis/TotalHeatVideoMapper.xml"/>
+        <mapper resource="mybatis/EmailGroupMapper.xml"/>
+        <mapper resource="mybatis/LoggerMapper.xml"/>
+    </mappers>
+</configuration>

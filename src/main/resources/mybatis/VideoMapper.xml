@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evistek.mediaserver.mapper.VideoMapper">
+    <sql id="videoColumns">
+        id, name, category_id, category_name, create_time, update_time, release_time, format, height, width,
+        size, duration, actors, location, url, landscape_cover_url, portrait_cover_url, preview1_url, preview2_url, preview3_url,
+        brief, introduction, owner_id, audit, download_count
+    </sql>
+
+    <sql id="orderBy">
+        ORDER BY
+        <if test="key == 'id'.toString()">id </if>
+        <if test="key == 'create_time'.toString()">create_time </if>
+        <if test="key == 'size'.toString()">size </if>
+        <if test="key == 'duration'.toString()">duration </if>
+        <if test="key == 'download_count'.toString()">download_count </if>
+
+        <if test="order == 'DESC'.toString()">DESC</if>
+        <if test="order == 'ASC'.toString()">ASC</if>
+    </sql>
+
+    <resultMap id="videoResultMap" type="com.evistek.mediaserver.entity.Video">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="release_time" property="releaseTime" jdbcType="TIMESTAMP" />
+        <result column="format" property="format" jdbcType="VARCHAR" />
+        <result column="height" property="height" jdbcType="INTEGER" />
+        <result column="width" property="width" jdbcType="INTEGER" />
+        <result column="size" property="size" jdbcType="INTEGER" />
+        <result column="duration" property="duration" jdbcType="INTEGER" />
+        <result column="actors" property="actors" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="landscape_cover_url" property="landscapeCoverUrl" jdbcType="VARCHAR" />
+        <result column="portrait_cover_url" property="portraitCoverUrl" jdbcType="VARCHAR" />
+        <result column="preview1_url" property="preview1Url" jdbcType="VARCHAR" />
+        <result column="preview2_url" property="preview2Url" jdbcType="VARCHAR" />
+        <result column="preview3_url" property="preview3Url" jdbcType="VARCHAR" />
+        <result column="brief" property="brief" jdbcType="VARCHAR" />
+        <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+        <result column="owner_id" property="ownerId" jdbcType="INTEGER" />
+        <result column="audit" property="audit" jdbcType="BOOLEAN" />
+        <result column="download_count" property="downloadCount" jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="selectVideoById" parameterType="int" resultMap="videoResultMap">
+        SELECT * FROM videos WHERE id = #{id}
+    </select>
+    <select id="selectVideoByUrl" parameterType="String" resultMap="videoResultMap">
+        SELECT * FROM videos WHERE url = #{url}
+    </select>
+
+    <select id="selectVideos" resultMap="videoResultMap">
+        SELECT * FROM videos
+    </select>
+    <select id="selectVideosOrderBy" parameterType="com.evistek.mediaserver.dao.OrderBy" resultMap="videoResultMap">
+        SELECT * FROM videos <include refid="orderBy"/>
+    </select>
+
+    <select id="selectVideosByCategoryId" parameterType="int" resultMap="videoResultMap">
+        SELECT * FROM videos WHERE category_id = #{categoryId}
+    </select>
+    <select id="selectVideosByCategoryIdOrderBy" parameterType="java.util.Map" resultMap="videoResultMap">
+        SELECT * FROM videos
+        WHERE category_id = #{categoryId}
+              <if test="audit != null">AND audit = #{audit}</if>
+        <include refid="orderBy"/>
+    </select>
+
+    <select id="selectVideosByCategoryName" parameterType="String" resultMap="videoResultMap">
+        SELECT * FROM videos WHERE category_name = #{categoryName}
+    </select>
+    <select id="selectVideosByCategoryNameOrderBy" parameterType="java.util.Map" resultMap="videoResultMap">
+        SELECT * FROM videos
+        WHERE category_name = #{categoryName}
+              <if test="audit != null">AND audit = #{audit}</if>
+        <include refid="orderBy"/>
+    </select>
+
+    <select id="selectVideosByAudit" parameterType="boolean" resultMap="videoResultMap">
+        SELECT * FROM videos WHERE audit = #{audit}
+    </select>
+    <select id="selectVideosByAuditOrderBy" parameterType="java.util.Map" resultMap="videoResultMap">
+        SELECT * FROM videos WHERE audit = #{audit} <include refid="orderBy"/>
+    </select>
+
+    <select id="selectVideoCount" resultType="int">
+        SELECT count(*) FROM videos
+    </select>
+    <select id="selectVideoCountByAudit" parameterType="boolean" resultType="int">
+        SELECT count(*) FROM videos WHERE audit = #{audit}
+    </select>
+
+    <insert id="insertVideo" parameterType="Video">
+        INSERT INTO videos (<include refid="videoColumns"/>)
+        VALUES (#{id}, #{name}, #{categoryId}, #{categoryName}, #{createTime}, #{updateTime}, #{releaseTime},
+                #{format}, #{width}, #{height}, #{size}, #{duration}, #{actors}, #{location}, #{url},
+                #{landscapeCoverUrl}, #{portraitCoverUrl}, #{preview1Url}, #{preview2Url}, #{preview3Url},
+                #{brief}, #{introduction}, #{ownerId}, #{audit}, #{downloadCount})
+    </insert>
+
+    <delete id="deleteVideo" parameterType="Video">
+        DELETE FROM videos WHERE id = #{id}
+    </delete>
+    <delete id="deleteVideoById" parameterType="int">
+        DELETE FROM videos WHERE id = #{id}
+    </delete>
+    <delete id="deleteVideoByUrl" parameterType="String">
+        DELETE FROM videos WHERE url = #{url}
+    </delete>
+    <delete id="deleteVideos" parameterType="List">
+        DELETE FROM videos WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <update id="updateVideo" parameterType="Video">
+        UPDATE videos
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+            <if test="format != null">format = #{format},</if>
+            <if test="width != null">width = #{width},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="actors != null">actors = #{actors},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="landscapeCoverUrl != null">landscape_cover_url = #{landscapeCoverUrl},</if>
+            <if test="portraitCoverUrl != null">portrait_cover_url = #{portraitCoverUrl},</if>
+            <if test="preview1Url != null">preview1_url = #{preview1Url},</if>
+            <if test="preview2Url != null">preview2_url = #{preview2Url},</if>
+            <if test="preview3Url != null">preview3_url = #{preview3Url},</if>
+            <if test="brief != null">brief = #{brief},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="audit != null">audit = #{audit},</if>
+            <if test="downloadCount != null">download_count = #{downloadCount}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

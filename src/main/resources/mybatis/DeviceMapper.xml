@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evistek.mediaserver.mapper.DeviceMapper">
+    <sql id="deviceColumns">
+        id, model, system, location, client, client_version, access_time, imei
+    </sql>
+    <sql id="deviceProperties">
+        #{id}, #{model}, #{system}, #{location}, #{client}, #{clientVersion}, #{accessTime}, #{imei}
+    </sql>
+
+    <resultMap id="deviceResultMap" type="Device">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="system" property="system" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="client" property="client" jdbcType="VARCHAR" />
+        <result column="client_version" property="clientVersion" jdbcType="VARCHAR" />
+        <result column="access_time" property="accessTime" jdbcType="TIMESTAMP" />
+        <result column="imei" property="imei" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectDeviceCount" resultType="int">
+        SELECT count(*) FROM devices
+    </select>
+    <select id="selectDeviceById" parameterType="int" resultMap="deviceResultMap">
+        SELECT * FROM devices WHERE id = #{id}
+    </select>
+    <select id="selectDeviceByImei" parameterType="String" resultMap="deviceResultMap">
+        SELECT * FROM devices WHERE imei = #{imei}
+    </select>
+    <select id="selectDevices" resultMap="deviceResultMap">
+        SELECT * FROM devices
+    </select>
+    <select id="selectDevicesByModel" parameterType="String" resultMap="deviceResultMap">
+        SELECT * FROM devices WHERE model = #{model}
+    </select>
+    <select id="selectDevicesBySystem" parameterType="String" resultMap="deviceResultMap">
+        SELECT * FROM devices WHERE system = #{system}
+    </select>
+    <select id="selectDevicesByLocation" parameterType="String" resultMap="deviceResultMap">
+        SELECT * FROM devices WHERE location = #{location}
+    </select>
+
+    <insert id="insertDevice" parameterType="Device">
+        INSERT INTO devices (<include refid="deviceColumns"/>)
+        VALUES (<include refid="deviceProperties"/>)
+    </insert>
+
+    <delete id="deleteDevice" parameterType="Device">
+        DELETE FROM devices WHERE id = #{id}
+    </delete>
+    <delete id="deleteDeviceById" parameterType="int">
+        DELETE FROM devices WHERE id = #{id}
+    </delete>
+    <delete id="deleteDeviceByImei" parameterType="String">
+        DELETE FROM devices WHERE imei = #{imei}
+    </delete>
+    <delete id="deleteDevices" parameterType="List">
+        DELETE FROM devices WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <update id="updateDevice" parameterType="Device">
+        UPDATE devices
+        <set>
+            <if test="model != null">model = #{model},</if>
+            <if test="system != null">system = #{system},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="client != null">client = #{client},</if>
+            <if test="clientVersion != null">client_version = #{clientVersion},</if>
+            <if test="accessTime != null">access_time = #{accessTime},</if>
+            <if test="imei != null">imei = #{imei}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <update id="updateDeviceByImei" parameterType="Device">
+        UPDATE devices
+        <set>
+            <if test="model != null">model = #{model},</if>
+            <if test="system != null">system = #{system},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="client != null">client = #{client},</if>
+            <if test="clientVersion != null">client_version = #{clientVersion},</if>
+            <if test="accessTime != null">access_time = #{accessTime},</if>
+        </set>
+        WHERE imei = #{imei}
+    </update>
+</mapper>

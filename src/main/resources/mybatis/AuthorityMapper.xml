@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evistek.mediaserver.mapper.AuthorityMapper">
+    <sql id="authorityColumns">
+        id, username, authority
+    </sql>
+
+    <select id="selectAuthorities" resultType="Authority">
+        SELECT * FROM authorities
+    </select>
+    <select id="selectAuthorityById" parameterType="int" resultType="Authority">
+        SELECT * FROM authorities WHERE id = #{id}
+    </select>
+    <select id="selectAuthorityByUsername" parameterType="String" resultType="Authority">
+        SELECT * FROM authorities WHERE username = #{username}
+    </select>
+
+    <insert id="insertAuthority" parameterType="Authority">
+        INSERT INTO authorities (<include refid="authorityColumns"/>)
+        VALUES (#{id}, #{username}, #{authority})
+    </insert>
+
+    <delete id="deleteAuthority" parameterType="Admin">
+        DELETE FROM authorities WHERE id = #{id}
+    </delete>
+    <delete id="deleteAuthorityById" parameterType="int">
+        DELETE FROM authorities WHERE id = #{id}
+    </delete>
+    <delete id="deleteAuthorityByUsername" parameterType="String">
+        DELETE FROM authorities WHERE username = #{username}
+    </delete>
+
+    <update id="updateAuthority" parameterType="Admin">
+        UPDATE authorities
+        <set>
+            <if test="authority != null">authority = #{authority}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <update id="updateAuthorityByUsername" parameterType="Admin">
+        UPDATE authorities
+        <set>
+            <if test="authority != null">authority = #{authority}</if>
+        </set>
+        WHERE username = #{username}
+    </update>
+</mapper>

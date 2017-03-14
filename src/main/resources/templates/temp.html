@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"></meta>
+<title>index</title>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"></link>
+<link rel="stylesheet" type="text/css" href="/css/index.css"></link>
+</head>
+<body>
+<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr class="success">
+					<td>ID</td>
+					<td>name</td>
+					<td>nickName</td>
+					<td>sex</td>
+					<td>location</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="info" th:each="users:${users}">
+					<td th:text="${users.id}">1</td>
+					<td th:text="${users.username}">大帅</td>
+					<td th:text="${users.nickname}">小帅</td>
+					<td th:text="${users.sex}">男</td>
+					<td th:text="${users.location}">上海</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

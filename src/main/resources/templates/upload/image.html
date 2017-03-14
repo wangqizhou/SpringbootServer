@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title>上传图片 &middot; 易维视后台管理系统</title>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/fileinput.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/fileinput-zh.js}"></script>
+    <script type="text/javascript" th:src="@{/js/fileinput-theme.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-filestyle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-table.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-datepicker.zh-CN.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-table-locale-all.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jsencrypt.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/encrypt.js}"></script>
+    <script type="text/javascript" th:src="@{/js/index.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-datepicker3.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fileinput.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-select.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}"/>
+    <link rel="icon" th:href="@{/images/favicon.ico}"/>
+    <script type="text/javascript">
+        if (window!=top) // 判断当前的window对象是否是top对象
+            top.location.href = window.location.href; // 如果不是，将top对象的网址自动导向被嵌入网页的网址
+
+        window.onload = function () {
+            $('#uploadImagePage').addClass("active");
+            getImageCategory();
+        };
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="http://www.evistek.com" target="_blank">易维视</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li id="homePage"><a th:href="@{/}" >Home</a></li>
+            <li id="databasePage" sec:authorize="hasAnyRole('ADMIN', 'DBA')">
+                <a th:href="@{/db/db.html}">数据库管理</a>
+            </li>
+            <li class="dropdown" sec:authorize="hasAnyRole('ADMIN', 'USER_MANAGER')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">用户管理
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="userManagerPage"><a th:href="@{/manager/user.html}">管理Users</a></li>
+                    <li id="adminManagerPage"><a th:href="@{/manager/admin.html}">管理Admins</a></li>
+                    <li id="loggerManagerPage"><a th:href="@{/manager/logger.html}">管理Loggers</a></li>
+                    <li><a href="javascript:void(0);" onclick="window.open('../mail/config')">管理邮件组</a></li>
+                </ul>
+            </li>
+            <li class="dropdown" sec:authorize="hasAnyRole('ADMIN', 'UPLOAD')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">资源上传
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="uploadImagePage"><a th:href="@{/upload/image.html}" >上传图片</a></li>
+                    <li id="uploadVideoPage"><a th:href="@{/upload/video.html}" >上传视频</a></li>
+                    <li id="uploadProductPage"><a th:href="@{/upload/product.html}" >上传广告</a></li>
+                    <!--<li><a data-toggle="tab" href="#uploadApplications">上传应用</a></li>-->
+                    <!--<li><a data-toggle="tab" href="#uploadVROnline">上传VR在线视频</a></li>-->
+                </ul>
+            </li>
+            <li class="dropdown" sec:authorize="hasAnyRole('ADMIN', 'STAT')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">资源统计
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="chartsPage"><a th:href="@{/stat/chart.html}" >统计图表</a></li>
+                    <li id="devicesPage"><a th:href="@{/stat/device.html}" >设备统计</a></li>
+                    <li id="downloadsPage"><a th:href="@{/stat/download.html}" >下载统计</a></li>
+                    <li id="favoritesPage"><a th:href="@{/stat/favorite.html}" >收藏记录</a></li>
+                    <li id="playRecordsPage"><a th:href="@{/stat/playRecord.html}" >播放记录</a></li>
+                    <li id="newUsersPage"><a th:href="@{/stat/newUser.html}" >新增用户</a></li>
+                    <li id="activeUsersPage"><a th:href="@{/stat/activeUser.html}" >活跃用户</a></li>
+                    <li id="heatContentPage"><a th:href="@{/stat/heatContent.html}" >内容热度</a></li>
+                </ul>
+            </li>
+            <li class="dropdown" sec:authorize="hasAnyRole('ADMIN', 'AUDIT')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">资源审核
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="auditImagePage"><a th:href="@{/audit/image.html}" >图片审核</a></li>
+                    <li id="auditVideoPage"><a th:href="@{/audit/video.html}" >视频审核</a></li>
+                    <li id="auditProductPage"><a th:href="@{/audit/product.html}" >广告审核</a></li>
+                </ul>
+            </li>
+            <li class="dropdown" sec:authorize="hasAnyRole('ADMIN', 'MODIFY')">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">资源修改
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li id="modifyImagePage"><a th:href="@{/modify/image.html}" >修改图片</a></li>
+                    <li id="modifyVideoPage"><a th:href="@{/modify/video.html}" >修改视频</a></li>
+                    <li id="modifyProductPage"><a th:href="@{/modify/product.html}" >修改广告</a></li>
+                    <!--<li><a data-toggle="tab" href="#modifyCategory" onclick="getAllCategories();">修改分类</a></li>-->
+                    <!--<li><a data-toggle="tab" href="#modifyVROnline" onclick="getAllVROlines();">修改VR在线视频</a></li>-->
+                </ul>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li id="userInfo" class="dropdown" >
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span class="glyphicon glyphicon-user"></span> 用户信息</a>
+                <ul class="dropdown-menu text-center">
+                    <li><span id="username" th:text="'用户名:&nbsp;&nbsp;' + ${username}"></span></li>
+                    <li role="presentation" class="divider"></li>
+                    <li><span id="level" th:text="'权&nbsp;&nbsp;&nbsp;限:&nbsp;&nbsp;' + ${authority}"></span></li>
+                    <li role="presentation" class="divider"></li>
+                    <li>
+                        <!--<form th:action="@{/admin/logout}" method="post">-->
+                        <a th:href="@{/admin/login}">
+                            <button id="exit" class="btn btn-primary btn-block" > 退出登录 </button>
+                        </a>
+                        <!--</form>-->
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!--commonModal-->
+<div class="modal" id="commonModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">提示</h4>
+            </div>
+            <div class="modal-body" id="commonModalBody">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="commonModalSuccess">确定</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="uploadImageInfo" role="form" action="uploadImages" method="post" class="col-lg-offset-3 col-lg-6" enctype="multipart/form-data">
+    <div class="form-group">
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" id="imageCategory" type="button" data-toggle="dropdown">
+                <input id="showImageCategory" type="text" name="imageCategory" class="form-control" placeholder="选取图片分类"/>
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu" id="imageCategoryList">
+            </ul>
+        </div>
+    </div>
+</form>
+<br/>
+<br/>
+<br/>
+<br/>
+<div class="form-group col-lg-offset-3 col-lg-6">
+    <input id="imageFiles" name="imageFiles" type="file" multiple="multiple" class="file-loading"/>
+</div>
+
+</body>
+</html>

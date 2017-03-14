@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>登陆 &middot; 易维视后台管理系统</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"/>
+	<link rel="icon" th:href="@{/images/favicon.ico}"/>
+</head>
+
+<body>
+	<div class="container">
+	    <p class="text-center err" th:text="${log}"></p>
+		<form class="form-login" th:action="@{/admin/login}" th:object="${admin}" method="POST" >
+			<div class="form-group form-group-lg">
+				<!-- <label for="username">用户名</label> -->
+				<input type="text" th:field="*{username}" class="form-control" id="username" placeholder="请输入用户名"
+					required="required" autofocus="autofocus"/>
+			</div>
+			<div class="form-group form-group-lg">
+				<!--<label for="password">密&nbsp;&nbsp;码</label> -->
+				<input type="password" th:field="*{password}" class="form-control" id="password" placeholder="请输入密码"
+					required="required"/>
+			</div>
+			<div class="checkbox">
+				<label> <input type="checkbox" name = "remember-me"/> 记住我
+				</label>
+			</div>
+
+			<button class="btn btn-lg btn-primary btn-block" type="submit">登&nbsp;&nbsp;陆</button>
+		</form>
+	</div>
+
+	<footer class="copyright">
+		<small>&copy;版权所有 2010-2017 上海易维视科技股份有限公司</small>
+	</footer>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jsencrypt.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/encrypt.js}"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evistek.mediaserver.mapper.ProductMapper">
+    <resultMap id="productResultMap" type="com.evistek.mediaserver.entity.Product">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+        <result column="website_url" property="websiteUrl" jdbcType="VARCHAR" />
+        <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="VARCHAR" />
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+        <result column="owner_id" property="ownerId" jdbcType="INTEGER" />
+        <result column="audit" property="audit" jdbcType="BOOLEAN" />
+    </resultMap>
+
+    <sql id="productColumns">
+        id, name, img_url, website_url, introduction, category_id, category_name, owner_id, audit
+    </sql>
+    <sql id="productProperties">
+        #{id}, #{name}, #{imgUrl}, #{websiteUrl}, #{introduction}, #{categoryId}, #{categoryName}, #{ownerId}, #{audit}
+    </sql>
+
+    <select id="selectProducts" resultMap="productResultMap">
+        SELECT * FROM products
+    </select>
+    <select id="selectProductById" parameterType="int" resultMap="productResultMap">
+        SELECT * FROM products WHERE id = #{id}
+    </select>
+    <select id="selectProductByName" parameterType="String" resultMap="productResultMap">
+        SELECT * FROM products WHERE name = #{name}
+    </select>
+    <select id="selectProductsByCategoryId" parameterType="int" resultMap="productResultMap">
+        SELECT * FROM products WHERE category_id = #{categoryId}
+    </select>
+    <select id="selectProductsByCategoryName" parameterType="String" resultMap="productResultMap">
+        SELECT * FROM products WHERE category_name = #{categoryName}
+    </select>
+    <select id="selectProductsByAudit" parameterType="boolean" resultMap="productResultMap">
+        SELECT * FROM products WHERE audit = #{audit}
+    </select>
+    <select id="selectProductCount" resultType="int">
+        SELECT count(*) FROM products
+    </select>
+
+    <insert id="insertProduct" parameterType="Product">
+        INSERT INTO products (<include refid="productColumns"/>)
+        VALUES (<include refid="productProperties"/>)
+    </insert>
+
+    <delete id="deleteProduct" parameterType="Product">
+        DELETE FROM products WHERE id = #{id}
+    </delete>
+    <delete id="deleteProductById" parameterType="int">
+        DELETE FROM products WHERE id = #{id}
+    </delete>
+    <delete id="deleteProducts" parameterType="List">
+        DELETE FROM products WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <update id="updateProduct" parameterType="Product">
+        UPDATE products
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="websiteUrl != null">website_url = #{websiteUrl},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="audit != null">audit = #{audit}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

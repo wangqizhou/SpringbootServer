@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.evistek.mediaserver.mapper.TotalPlayRecordMapper">
+    <resultMap id="BaseResultMap" type="com.evistek.mediaserver.entity.PlayRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="video_id" property="videoId" jdbcType="INTEGER" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="duration" property="duration" jdbcType="INTEGER" />
+        <result column="client" property="client" jdbcType="VARCHAR" />
+        <result column="client_version" property="clientVersion" jdbcType="VARCHAR" />
+        <result column="video_name" property="videoName" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="OrderBy">
+        ORDER BY
+        <if test="key == 'id'.toString()">id</if>
+        <if test="key == 'start_time'.toString()">start_time</if>
+        <if test="key == 'end_time'.toString()">end_time</if>
+        <if test="key == 'duration'.toString()">duration</if>
+
+        <if test="order == 'DESC'.toString()">DESC</if>
+        <if test="order == 'ASC'.toString()">ASC</if>
+    </sql>
+    <resultMap id="StatsticMonthMap" type="com.evistek.mediaserver.entity.StatisticUser">
+        <result column="months" property="grade" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="StatsticDaysMap" type="com.evistek.mediaserver.entity.StatisticUser">
+        <result column="days" property="grade" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="StatsticWeeksMap" type="com.evistek.mediaserver.entity.StatisticUser">
+        <result column="weeks" property="grade" jdbcType="VARCHAR" />
+        <result column="starttime" property="startTime" jdbcType="VARCHAR" />
+        <result column="endtime" property="endTime" jdbcType="VARCHAR" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="selectTotalPlayRecordsByUserId" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM total_play_records
+        WHERE user_id =
+        #{userId} AND client = #{client}
+    </select>
+    <select id="selectTotalPlayRecordsByUserIdOrderBy" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM total_play_records
+        WHERE user_id =
+        #{userId} AND client = #{client} <include refid="OrderBy"/>
+    </select>
+    <select id="selectTotalRecordsBeforeMonth" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT * FROM total_play_records
+        WHERE start_time &lt; date_sub(#{date}, INTERVAL #{month} MONTH)
+    </select>
+
+    <select id="selectTotalPlayRecord" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT * FROM total_play_records
+        WHERE user_id = #{userId} AND video_id = #{videoId} AND client = #{client}
+    </select>
+
+    <select id="selectOnlyTotalPlayRecord" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT * FROM total_play_records
+        WHERE user_id = #{userId} AND video_id = #{videoId}  AND start_time = #{startTime} AND client = #{client}
+    </select>
+
+    <select id="selectTotalPlayRecordCount" resultType="int">
+        SELECT COUNT(*) FROM total_play_records
+    </select>
+    <select id="selectTotalPlayRecords" resultMap="BaseResultMap">
+        SELECT * FROM total_play_records
+    </select>
+    <select id="selectTotalPlayRecordsOrderBy" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT * FROM total_play_records <include refid="OrderBy"/>
+    </select>
+
+
+    <select id="getStatisticActiveUserByMonths" parameterType="java.util.Map" resultMap="StatsticMonthMap">
+        SELECT months, location, COUNT(*) AS COUNT
+        FROM
+            (SELECT  DATE_FORMAT(start_time,'%Y%m') months,
+                    (SELECT location
+                    FROM users
+                    WHERE id = total_play_records.user_id)
+                    AS location
+            FROM total_play_records
+            WHERE PERIOD_DIFF(date_format( #{date, jdbcType=TIMESTAMP} , '%Y%m' ), date_format( start_time, '%Y%m' ) ) &gt; -1
+            &amp;&amp; PERIOD_DIFF(date_format( #{date, jdbcType=TIMESTAMP} , '%Y%m' ) ,
+            date_format( start_time, '%Y%m' ) ) &lt; #{num, jdbcType=INTEGER}
+            GROUP BY user_id, months)
+        AS a GROUP BY ${query_type}
+    </select>
+    <select id="getStatisticActiveUserByWeeks" parameterType="java.util.Map" resultMap="StatsticWeeksMap">
+        SELECT weeks, starttime , endtime, location, COUNT(*) AS count
+        FROM
+            (SELECT  DATE_FORMAT(start_time,'%Y%u') weeks,
+                     date_sub(date_format(start_time,'%Y%m%d'),
+                     INTERVAL WEEKDAY(start_time) DAY) as starttime,
+                     date_sub(date_format(start_time,'%Y%m%d'),
+                     INTERVAL WEEKDAY(start_time) - 6 DAY) AS endtime,
+                     (SELECT location
+                      FROM users
+                      WHERE id = total_play_records.user_id)
+                      AS location
+            FROM total_play_records
+            WHERE PERIOD_DIFF( date_format( #{date, jdbcType=TIMESTAMP} , '%Y%m' ),
+                  date_format( start_time, '%Y%m' ) ) &gt; -1 &amp;&amp; PERIOD_DIFF( date_format(#{date, jdbcType=TIMESTAMP},
+                   '%Y%m' ) , date_format( start_time,'%Y%m' ) ) &lt; #{num, jdbcType=INTEGER}
+            GROUP BY user_id, weeks)
+        AS a GROUP BY ${query_type}
+    </select>
+    <select id="getStatisticActiveUserByDays" parameterType="java.util.Map" resultMap="StatsticDaysMap">
+        SELECT days, location, COUNT(*) AS count
+        FROM
+            (SELECT  DATE_FORMAT(start_time,'%Y%m%d') days,
+                (SELECT location
+                FROM users
+                WHERE id = total_play_records.user_id) AS location
+            FROM total_play_records
+            WHERE PERIOD_DIFF(date_format( #{date, jdbcType=TIMESTAMP}, '%Y%m' ),
+                      date_format(start_time, '%Y%m' ) ) &gt; -1 &amp;&amp;
+                      PERIOD_DIFF( date_format( #{date, jdbcType=TIMESTAMP} ,'%Y%m' ) ,
+                      date_format(start_time, '%Y%m' ) ) &lt; #{num, jdbcType=INTEGER}
+              GROUP BY user_id, days)
+        AS a GROUP BY ${query_type}
+    </select>
+
+    <insert id="insertTotalPlayRecord" parameterType="com.evistek.mediaserver.entity.PlayRecord">
+        INSERT INTO total_play_records (id,
+        user_id, video_id, start_time, end_time, duration,
+        client, client_version, video_name
+        )
+        VALUES
+        (#{id,jdbcType=INTEGER},
+        #{userId,jdbcType=INTEGER},
+        #{videoId,jdbcType=INTEGER},
+        #{startTime,jdbcType=TIMESTAMP},
+        #{endTime,jdbcType=TIMESTAMP},
+        #{duration,jdbcType=INTEGER},
+        #{client,jdbcType=VARCHAR},
+        #{clientVersion,jdbcType=VARCHAR},
+        #{videoName,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <delete id="deleteTotalRecordsBeforeMonth" parameterType="java.util.Map">
+        DELETE FROM total_play_records
+        WHERE start_time &lt; date_sub(#{date},
+        INTERVAL #{month} MONTH)
+    </delete>
+    <delete id="deleteTotalPlayRecord" parameterType="com.evistek.mediaserver.entity.PlayRecord">
+        DELETE FROM
+        total_play_records
+        WHERE id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteTotalPlayRecordsByUserId" parameterType="java.util.Map">
+        DELETE FROM
+        total_play_records
+        WHERE user_id = #{userId} AND client = #{client}
+    </delete>
+    <delete id="deleteTotalPlayRecords" parameterType="java.util.List">
+        DELETE FROM total_play_records WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <update id="updateTotalPlayRecord" parameterType="PlayRecord">
+        UPDATE total_play_records
+        <set>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null" >end_time = #{endTime},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="clientVersion != null">client_version = #{clientVersion},</if>
+            <if test="videoName != null">video_name = #{videoName}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <update id="updateTotalDuration" parameterType="PlayRecord">
+        UPDATE total_play_records
+        <set>
+            <if test="endTime != null" >end_time = #{endTime},</if>
+            <if test="duration != null">duration = #{duration},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

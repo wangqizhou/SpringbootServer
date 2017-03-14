@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evistek.mediaserver.mapper.ImageMapper">
+    <sql id="imageColumns">
+        id, name, category_id, category_name, create_time, update_time, format, height, width,
+        size, url, thumbnail, owner_id, audit, download_count
+    </sql>
+
+    <resultMap id="imageResultMap" type="com.evistek.mediaserver.entity.Image">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="format" property="format" jdbcType="VARCHAR" />
+        <result column="height" property="height" jdbcType="INTEGER" />
+        <result column="width" property="width" jdbcType="INTEGER" />
+        <result column="size" property="size" jdbcType="INTEGER" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="thumbnail" property="thumbnail" jdbcType="VARCHAR" />
+        <result column="owner_id" property="ownerId" jdbcType="INTEGER" />
+        <result column="audit" property="audit" jdbcType="BOOLEAN" />
+        <result column="download_count" property="downloadCount" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="orderBy">
+        ORDER BY
+        <if test="key == 'id'.toString()">id </if>
+        <if test="key == 'create_time'.toString()">create_time </if>
+        <if test="key == 'update_time'.toString()">update_time </if>
+        <if test="key == 'size'.toString()">size </if>
+        <if test="key == 'download_count'.toString()">download_count </if>
+
+        <if test="order == 'DESC'.toString()">DESC</if>
+        <if test="order == 'ASC'.toString()">ASC</if>
+    </sql>
+
+    <select id="selectImageById" parameterType="java.util.Map" resultMap="imageResultMap">
+        SELECT * FROM images WHERE id = #{id}
+        <if test="audit != null"> AND audit = #{audit} </if>
+    </select>
+    <select id="selectImageByUrl" parameterType="String" resultMap="imageResultMap">
+        SELECT * FROM images WHERE url = #{url}
+    </select>
+    <select id="selectImages" resultMap="imageResultMap">
+        SELECT * FROM images
+    </select>
+    <select id="selectImagesOrderBy" parameterType="com.evistek.mediaserver.dao.OrderBy" resultMap="imageResultMap">
+        SELECT * FROM images <include refid="orderBy"/>
+    </select>
+
+    <select id="selectImagesByCategoryId" parameterType="int" resultMap="imageResultMap">
+        SELECT * FROM images WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="selectImagesByCategoryIdOrderBy" parameterType="java.util.Map" resultMap="imageResultMap">
+        SELECT * FROM images
+        WHERE category_id = #{categoryId}
+              <if test="audit != null">AND audit = #{audit} </if>
+        <include refid="orderBy"/>
+    </select>
+
+    <select id="selectImagesByCategoryName" parameterType="String" resultMap="imageResultMap">
+        SELECT * FROM images WHERE category_name = #{categoryName}
+    </select>
+
+    <select id="selectImagesByCategoryNameOrderBy" parameterType="java.util.Map" resultMap="imageResultMap">
+        SELECT * FROM images WHERE category_name = #{categoryName} <if test="audit != null"> AND audit = #{audit} </if> <include refid="orderBy"/>
+    </select>
+
+    <select id="selectImagesByAudit" parameterType="boolean" resultMap="imageResultMap">
+        SELECT * FROM images WHERE audit = #{audit}
+    </select>
+
+    <select id="selectImagesByAuditOrderBy" parameterType="boolean" resultMap="imageResultMap">
+        SELECT * FROM images WHERE audit = #{audit} <include refid="orderBy"/>
+    </select>
+
+    <select id="selectImageCount" resultType="int">
+        SELECT count(*) FROM images
+    </select>
+
+    <select id="selectImageCountByAudit" parameterType="boolean" resultType="int">
+        SELECT count(*) FROM images WHERE audit = #{audit}
+    </select>
+
+    <insert id="insertImage" parameterType="Image">
+        INSERT INTO images (<include refid="imageColumns"/>)
+        VALUES (#{id}, #{name}, #{categoryId}, #{categoryName}, #{createTime}, #{updateTime},#{format},
+        #{width}, #{height}, #{size}, #{url},#{thumbnail}, #{ownerId}, #{audit}, #{downloadCount})
+    </insert>
+
+    <delete id="deleteImage" parameterType="Image">
+        DELETE FROM images WHERE id = #{id}
+    </delete>
+    <delete id="deleteImageById" parameterType="int">
+        DELETE FROM images WHERE id = #{id}
+    </delete>
+    <delete id="deleteImageByUrl" parameterType="String">
+        DELETE FROM images WHERE url = #{url}
+    </delete>
+    <delete id="deleteImages" parameterType="List">
+        DELETE FROM images WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <update id="updateImage" parameterType="Image">
+        UPDATE images
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="format != null">format = #{format},</if>
+            <if test="width != null">width = #{width},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="thumbnail != null">thumbnail = #{thumbnail},</if>
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="audit != null">audit = #{audit},</if>
+            <if test="downloadCount != null">download_count = #{downloadCount},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

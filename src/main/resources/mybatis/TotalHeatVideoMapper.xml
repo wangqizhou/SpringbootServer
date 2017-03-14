@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.evistek.mediaserver.dao.TotalHeatVideoDao">
+    <resultMap type="com.evistek.mediaserver.entity.HeatVideo"
+               id="BaseResultMap">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="video_id" property="videoId" jdbcType="INTEGER" />
+        <result column="video_name" property="videoName" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="time" property="time" jdbcType="TIMESTAMP" />
+        <result column="download_count" property="downloadCount" jdbcType="INTEGER" />
+        <result column="compare_count" property="compareCount" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="StatisticMonthMap" type="com.evistek.mediaserver.entity.StatisticVideo">
+        <result column="months" property="grade" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="INTEGER" />
+        <result column="video_name" property="videoName" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+        <result column="com_count" property="comCount" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="StatisticDaysMap" type="com.evistek.mediaserver.entity.StatisticVideo">
+        <result column="days" property="grade" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="INTEGER" />
+        <result column="video_name" property="videoName" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+        <result column="com_count" property="comCount" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="StatisticWeeksMap" type="com.evistek.mediaserver.entity.StatisticVideo">
+        <result column="weeks" property="grade" jdbcType="VARCHAR" />
+        <result column="starttime" property="startTime" jdbcType="VARCHAR" />
+        <result column="endtime" property="endTime" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="INTEGER" />
+        <result column="video_name" property="videoName" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+        <result column="com_count" property="comCount" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="selectHeatVideoByMonth" parameterType="java.util.Map" resultMap="StatisticMonthMap">
+        SELECT
+              date_format(time,'%Y%m') months,
+              video_id,
+              video_name,
+              category_id,
+              MAX(download_count) AS total_count,
+              SUM(compare_count) AS com_count
+        FROM total_heat_videos
+        WHERE
+              PERIOD_DIFF(date_format(#{date},'%Y%m' ), date_format(time, '%Y%m' ) ) &gt; -1
+              &amp;&amp;
+              PERIOD_DIFF(date_format( #{date}, '%Y%m'), date_format( time, '%Y%m' ) ) &lt; #{num}
+        GROUP BY months, video_id;
+    </select>
+    <select id="selectHeatVideoByMonthFilterZero" parameterType="java.util.Map" resultMap="StatisticMonthMap">
+        SELECT * FROM
+              (SELECT
+                      date_format(time,'%Y%m') months,
+                      video_id, video_name,
+                      category_id,
+                      MAX(download_count) AS total_count,
+                      SUM(compare_count) AS com_count
+              FROM total_heat_videos
+              WHERE PERIOD_DIFF(date_format(#{date}, '%Y%m' ), date_format(time, '%Y%m' ) ) &gt; -1
+                    &amp;&amp;
+                    PERIOD_DIFF(date_format( #{date}, '%Y%m'), date_format( time, '%Y%m' ) ) &lt; #{num}
+              GROUP BY months, video_id) AS a
+        WHERE a.com_count > 0;
+    </select>
+
+    <select id="selectHeatVideoByWeek" parameterType="java.util.Map" resultMap="StatisticWeeksMap">
+        SELECT
+                date_format(time,'%Y%u') weeks,
+                date_sub(date_format(time,'%Y%m%d'),
+                INTERVAL WEEKDAY(time) DAY) AS starttime,
+                date_sub(date_format(time,'%Y%m%d'),
+                INTERVAL WEEKDAY(time) - 6 DAY) AS endtime,
+                video_id,
+                video_name,
+                category_id,
+                MAX(download_count) AS total_count,
+                sum(compare_count) AS com_count
+        FROM total_heat_videos
+        WHERE
+              PERIOD_DIFF(date_format( #{date}, '%Y%m' ), date_format( time, '%Y%m' ) ) &gt; -1
+              &amp;&amp;
+              PERIOD_DIFF(date_format( #{date}, '%Y%m' ), date_format( time, '%Y%m' ) ) &lt; #{num}
+        GROUP BY weeks, video_id;
+    </select>
+    <select id="selectHeatVideoByWeekFilterZero" parameterType="java.util.Map" resultMap="StatisticWeeksMap">
+        SELECT * FROM
+              (SELECT
+                      date_format(time,'%Y%u') weeks,
+                      date_sub(date_format(time,'%Y%m%d'),
+                      INTERVAL WEEKDAY(time) DAY) AS starttime,
+                      date_sub(date_format(time,'%Y%m%d'),
+                      INTERVAL WEEKDAY(time) - 6 DAY) as endtime,
+                      video_id,
+                      video_name,
+                      category_id,
+                      MAX(download_count) AS total_count,
+                      SUM(compare_count) AS com_count
+              FROM total_heat_videos
+              WHERE
+                    PERIOD_DIFF(date_format( #{date}, '%Y%m' ), date_format( time, '%Y%m' ) ) &gt; -1
+                    &amp;&amp;
+                    PERIOD_DIFF(date_format( #{date}, '%Y%m' ), date_format( time, '%Y%m' ) ) &lt; #{num}
+              GROUP BY weeks, video_id) AS a
+        WHERE a.com_count > 0;
+    </select>
+    <select id="selectHeatVideoByDay" parameterType="java.util.Map" resultMap="StatisticDaysMap">
+        SELECT
+                date_format(time,'%Y%m%d') days,
+                video_id,
+                video_name,
+                category_id,
+                MAX(download_count) AS total_count,
+                SUM(compare_count) AS com_count
+        FROM total_heat_videos
+        WHERE
+              PERIOD_DIFF(date_format(#{date}, '%Y%m' ), date_format(time, '%Y%m' ) ) &gt; -1
+              &amp;&amp;
+              PERIOD_DIFF(date_format( #{date}, '%Y%m'), date_format( time, '%Y%m' ) ) &lt; #{num}
+        GROUP BY days, video_id;
+    </select>
+    <select id="selectHeatVideoByDayFilterZero" parameterType="java.util.Map" resultMap="StatisticDaysMap">
+        SELECT * FROM
+                (SELECT
+                        date_format(time,'%Y%m%d') days,
+                        video_id,
+                        video_name,
+                        category_id,
+                        MAX(download_count) AS total_count,
+                        SUM(compare_count) AS com_count
+                FROM total_heat_videos
+                WHERE
+                      PERIOD_DIFF(date_format(#{date},'%Y%m' ), date_format(time, '%Y%m' ) ) &gt; -1
+                      &amp;&amp;
+                      PERIOD_DIFF(date_format( #{date}, '%Y%m'), date_format( time, '%Y%m' ) ) &lt; #{num}
+                GROUP BY days, video_id) AS a
+        WHERE a.com_count > 0;
+    </select>
+</mapper>

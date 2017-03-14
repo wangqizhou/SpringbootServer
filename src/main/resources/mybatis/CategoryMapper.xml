@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.evistek.mediaserver.mapper.CategoryMapper">
+    <sql id="categoryColumns">
+        id, name, type
+    </sql>
+
+    <select id="selectCategories" resultType="Category">
+        SELECT * FROM categories
+    </select>
+    <select id="selectCategoryById" parameterType="int" resultType="Category">
+        SELECT * FROM categories WHERE id = #{id}
+    </select>
+    <select id="selectCategoriesByType" parameterType="String" resultType="Category">
+        SELECT * FROM categories WHERE type = #{type}
+    </select>
+    <select id="selectCategoryId" parameterType="java.util.Map" resultType="int">
+        SELECT id FROM categories WHERE name = #{name} AND type = #{type}
+    </select>
+    <select id="selectCategoryType" resultType="String">
+        SELECT type FROM categories GROUP BY type
+    </select>
+    <select id="selectCategoryNumber" resultType="int">
+        SELECT count(*) FROM categories
+    </select>
+
+    <insert id="insertCategory" parameterType="Category">
+        INSERT INTO categories (<include refid="categoryColumns"/>)
+        VALUES (#{id}, #{name}, #{type})
+    </insert>
+
+    <delete id="deleteCategory" parameterType="Category">
+        DELETE FROM categories WHERE id = #{id}
+    </delete>
+    <delete id="deleteCategoryById" parameterType="int">
+        DELETE FROM categories WHERE id = #{id}
+    </delete>
+    <delete id="deleteCategoryByType" parameterType="String">
+        DELETE FROM categories WHERE type = #{type}
+    </delete>
+
+    <update id="updateCategory" parameterType="Category">
+        UPDATE categories
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

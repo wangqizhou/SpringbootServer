@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>下载排行</title>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-table.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-table-locale-all.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/downloadCount.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-table.min.css}"/>
+    <link rel="icon" th:href="@{/images/favicon.ico}"/>
+</head>
+<body>
+<div class="container" sec:authorize="hasAnyRole('ADMIN', 'ROLE_STAT')">
+    <table id="download-table" class="table table-bordered table-striped col-lg-4">
+    </table>
+</div>
+</body>
+</html>
